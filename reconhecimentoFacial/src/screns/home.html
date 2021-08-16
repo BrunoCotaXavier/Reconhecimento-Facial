@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Face dedection</title>
+  <style>
+    video, canvas{
+      position: absolute;
+      border: 1px solid red;
+    }
+  </style>
+</head>
+<body>
+  
+  <video id="video" width="320px" height="240" preload autoplay loop muted></video>
+  <canvas id="canvas" width="320px" height="240"></canvas>
+
+  <script src="/script/tracking-min.js" ></script>
+  <script src="/script/data/face-min.js"></script>
+  <script src="/script/data/eye-min.js"></script>
+  <script src="/script/data/mouth-min.js"></script>
+
+  <script>
+    function init(){
+      const video = document.getElementById('video')
+      const canvas = document.getElementById('canvas')
+      const context = canvas.getContext('2d')
+      const tracker = new tracking.ObjectTracker(['face','eye'])
+      tracking.track('#video', tracker, {camera: true})
+      tracker.on('track', event =>{
+        context.clearRect(0,0, canvas.width, canvas.height)
+        if(event.data.length === 0){
+          console.log("Não detectado")
+        }else{
+          event.data.forEach(element => {
+            console.log(element)
+            context.strokeStyle = '#ff0000'
+            context.lineWidth = 2
+            context.strokeRect(element.x, element.y, element.width, element.height)
+          });
+        }
+      })
+    }
+
+    window.onload = init()
+  </script>
+</body>
+</html>
